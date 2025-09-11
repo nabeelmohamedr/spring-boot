@@ -1,0 +1,32 @@
+version: "3.8"   # Docker Compose file format version
+
+services:
+  omnitrix-backend:   # Our Spring Boot app (backend)
+    build:           # Build the image from source code
+      context: .     # Use current directory as build context
+      dockerfile: Dockerfile  # Use the provided Dockerfile
+    restart: always  # Auto-restart if container stops/crashes
+    ports:
+      - "8080:8080"  # Map host:8080 -> container:8080
+    depends_on:
+      - omnitrix-db   # Ensure DB container starts before backend
+    env_file:
+      - .env         # Load environment variables from .env file
+
+  omnitrix-db:        # MySQL database container
+    image: mysql:8.0 # Use MySQL version 8.0 official image
+    restart: always  # Auto-restart database if stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}   # Root password (from .env)
+      MYSQL_DATABASE: ${DB_NAME}        # Default DB name (from .env)
+      MYSQL_USER: ${DB_USER}            # DB username (from .env)
+      MYSQL_PASSWORD: ${DB_PASSWORD}        # DB user password (from .env)
+    ports:
+      - "3306:3306"  # Expose MySQL on host:3306 for external tools
+    volumes:
+      - db_data:/var/lib/mysql  # Store DB data outside container (persistent)
+    env_file:
+      - .env         # Load environment variables from .env file
+
+volumes:
+  db_data:           # Named volume for MySQL persistent storage
