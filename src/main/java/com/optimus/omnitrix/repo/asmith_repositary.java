@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
-public interface asmith_repositary extends JpaRepository<asmith_entity, Long>, JpaSpecificationExecutor<asmith_entity> {
+public interface asmith_repositary extends JpaRepository<asmith_entity, Long>, JpaSpecificationExecutor<asmith_entity>
+{
     public Optional<asmith_entity> findByusername(String username);
 
 //interface between entity and  controler

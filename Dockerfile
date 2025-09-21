@@ -8,14 +8,11 @@ RUN ./mvnw clean package -DskipTests
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# Copy jar
+# Copy JAR
 COPY --from=builder /build/target/omnitrix-0.0.1-SNAPSHOT.jar app.jar
 
-# Copy prod config
-COPY ./src/main/resources/application-production.properties /app/config/application-prod.properties
-
-# (Optional) Copy .env if your app parses it via dotenv-java
-COPY ./.env /app/.env
+# Copy all resource configs
+COPY ./src/main/resources/ /app/config/
 
 # Spring Boot config
 ENV SPRING_CONFIG_LOCATION=file:/app/config/

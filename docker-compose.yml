@@ -1,32 +1,36 @@
-version: "3.8"   # Docker Compose file format version
+version: "3.8"
 
 services:
-  omnitrix-backend:   # Our Spring Boot app (backend)
-    build:           # Build the image from source code
-      context: .     # Use current directory as build context
-      dockerfile: Dockerfile  # Use the provided Dockerfile
-    restart: always  # Auto-restart if container stops/crashes
+  omnitrix-backend:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+    restart: always
     ports:
-      - "8080:8080"  # Map host:8080 -> container:8080
+      - "8080:8080"
     depends_on:
-      - omnitrix-db   # Ensure DB container starts before backend
-    env_file:
-      - .env         # Load environment variables from .env file
-
-  omnitrix-db:        # MySQL database container
-    image: mysql:8.0 # Use MySQL version 8.0 official image
-    restart: always  # Auto-restart database if stopped
+      - omnitrix-db
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}   # Root password (from .env)
-      MYSQL_DATABASE: ${DB_NAME}        # Default DB name (from .env)
-      MYSQL_USER: ${DB_USER}            # DB username (from .env)
-      MYSQL_PASSWORD: ${DB_PASSWORD}        # DB user password (from .env)
-    ports:
-      - "3306:3306"  # Expose MySQL on host:3306 for external tools
-    volumes:
-      - db_data:/var/lib/mysql  # Store DB data outside container (persistent)
+      - SPRING_PROFILES_ACTIVE=production
+      - DB_URL=jdbc:mysql://omnitrix-db:3306/omnitrix-db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
     env_file:
-      - .env         # Load environment variables from .env file
+      - .env
+
+  omnitrix-db:
+    image: mysql:8.0
+    container_name: omnitrix-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass123   # ✅ different root password
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
 
 volumes:
-  db_data:           # Named volume for MySQL persistent storage
+  db_data:

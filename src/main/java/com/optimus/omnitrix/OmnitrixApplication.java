@@ -12,7 +12,7 @@ public class OmnitrixApplication {
 	public static void main(String[] args) {
 
         Dotenv dotenv = Dotenv.configure()
-                .directory(System.getProperty("user.dir"))
+                .directory(System.getProperty("user.dir")) //("./")
                 .ignoreIfMalformed()
                 .ignoreIfMissing()
                 .load();
